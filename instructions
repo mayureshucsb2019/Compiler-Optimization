@@ -1,0 +1,29 @@
+Please run the bash script 
+	downloadReposAndDatasets.sh 
+to download both repos which we have worked on. 
+ - The Tigr repo is made to compile for GTX 10 series GPUs, so if it fails, please change the sm flags to the corresponding GPU architecture 
+ - The script will download the three datasets that we have used in our report and presentation and can be found under Tigr/datasets
+ - After the script has finished, please make a UDT-transformed graph from a dataset by running a command like the one below while in the Tigr repo:
+
+	./make_udt --is_weighted --input datasets/Higgs/higgs-social_network.edgelist_weighted
+
+ - This will give an output called udt_graph.txt in the root directory of Tigr which is our transformed intermediate representation of a graph
+ - To change the part_size parameter which details how large a node should be before it should split, please change it in Tigr/shared/globals.hpp and make clean and make -f Test_Makefile to recreate make_udt
+
+
+Next, we take this udt_graph.txt and input it into CuSha, which we have changed a bit for working with weights for virtual nodes.
+ - Currently, CuSha is setup to run the BFS algorithm on the input graph. If you would like to change it to SSSP, please comment out BFS and uncomment SSSP in CuSha/common/user_specified_global_configurations.h
+ - To run CuSha, run a command similar to the one below:
+
+	./cusha --input ../Tigr/udt_graph.txt --method GS --output out.txt
+
+
+In order to get baselines from Tigr for a specific graph, please run the following while in the Tigr directory:
+	./bfs --input datasets/Higgs/higgs-social_network.edgelist_weighted
+		or
+	./sssp --input datasets/Higgs/higgs-social_network.edgelist_weighted
+For reference, we looked at the time required for processing only for Tigr 
+
+In order to get baselines from CuSha for a specific graph, please run the following while in the CuSha directory:
+	./cusha --input ../Tigr/datasets/Higgs/higgs-social_network.edgelist_weighted --method GS --output out.txt
+For reference, we looked at the processing time only for CuSha
